@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
+import { Container, Box, Typography, TextField, Button, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import authService from "../../services/authService";
+import api from "../../services/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -21,26 +21,15 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    
     try {
-      const response = await authService.register(
-        formData.username,
-        formData.email,
-        formData.password
-      );
-      navigate("/login");
-    } catch (err) {
-      setError(err.message);
-      if (err.message.includes("Username")) {
-        setFormData(prev => ({
-          ...prev,
-          username: ""
-        }));
-      } else if (err.message.includes("Email")) {
-        setFormData(prev => ({
-          ...prev,
-          email: ""
-        }));
+      const response = await api.post("/auth/signup", formData);
+      if (response.data.success) {
+        navigate("/login");
       }
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -58,9 +47,9 @@ const Register = () => {
           Register
         </Typography>
         {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
+          <Alert severity="error" sx={{ mt: 2, width: "100%" }}>
             {error}
-          </Typography>
+          </Alert>
         )}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField

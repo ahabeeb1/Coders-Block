@@ -1,12 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { AuthProvider } from "./context/AuthContext";
-import Navbar from "./components/layout/Navbar";
-import Home from "./components/Home";
-import Login from "./components/auth/login";
-import Register from "./components/auth/Register";
-import Profile from "./components/profile/Profile";
-import PrivateRoute from "./components/routing/PrivateRoute";
+import AppRoutes from "./routes/AppRoutes";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 const theme = createTheme({
   palette: {
@@ -17,32 +14,27 @@ const theme = createTheme({
       main: "#dc004e",
     },
   },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontSize: 14,
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+    fontWeightBold: 700,
+  },
 });
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </div>
-        </Router>
-      </ThemeProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ThemeProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

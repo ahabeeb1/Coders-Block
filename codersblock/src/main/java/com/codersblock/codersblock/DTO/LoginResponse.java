@@ -13,9 +13,12 @@ public class LoginResponse {
 
     public String message;
 
+    public boolean success;
+
     public LoginResponse(String email, String username, String message) {
         this.email = email;
         this.username = username;
         this.message = message;
+        this.success = true;
     }
 }

@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Alert,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import authService from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../services/api";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -20,19 +29,16 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const response = await authService.login(
-        formData.username,
-        formData.password
-      );
-      localStorage.setItem("user", JSON.stringify(response));
-      navigate("/profile");
+      const response = await api.post("/auth/login", formData);
+      if (response.data) {
+        login(response.data);
+        navigate("/dashboard"); // Navigate to dashboard after successful login
+      }
     } catch (err) {
-      setError(err.message);
-      setFormData((prev) => ({
-        ...prev,
-        password: "",
-      }));
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -47,12 +53,12 @@ const Login = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Login
+          Sign In
         </Typography>
         {error && (
-          <Typography color="error" sx={{ mt: 2 }}>
+          <Alert severity="error" sx={{ mt: 2, width: "100%" }}>
             {error}
-          </Typography>
+          </Alert>
         )}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField

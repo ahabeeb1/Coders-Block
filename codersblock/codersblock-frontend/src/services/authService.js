@@ -33,6 +33,19 @@ const authService = {
       throw new Error("Network error occurred");
     }
   },
+
+  changePassword: async (username, currentPassword, newPassword) => {
+    try {
+      const response = await axios.post(API_URL + "change-password", {
+        username,
+        currentPassword,
+        newPassword
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to change password');
+    }
+  },
 };
 
 export default authService;

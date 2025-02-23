@@ -12,8 +12,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +27,7 @@ public class ApplicationSecurity {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/signup", "/auth/verify").permitAll()
                         .anyRequest().authenticated());
         return httpSecurity.build();
     }
